@@ -1,22 +1,22 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import { UsersController } from "./users.controller";
+import { UsersService } from "./users.service";
 
-describe('Users Controller', () => {
+describe("Users Controller", () => {
   let controller: UsersController;
 
   const mockUsersService = {
     createUser: jest.fn((dto) => {
       return {
         id: dto.contactId,
-        fullName: 'Herbert Otim',
-        avatar: 'http://avatar.com/1',
+        fullName: "Herbert Otim",
+        avatar: "http://avatar.com/1",
         ...dto,
       };
     }),
     findOne: jest.fn((id) => {
       return {
-         id: id,
+        id: id,
         username: "janedoe@test.com",
         fullName: "Jane Doe",
         contactId: Date.now(),
@@ -25,10 +25,10 @@ describe('Users Controller', () => {
           name: "Jane Doe",
         },
         avatar: "http://avatar.com/2",
-        roles: ['USER_VIEW', 'DASHBOARD', 'CRM_VIEW'],
+        roles: ["USER_VIEW", "DASHBOARD", "CRM_VIEW"],
         isActive: false,
-      }
-    })
+      };
+    }),
   };
 
   beforeEach(async () => {
@@ -43,16 +43,16 @@ describe('Users Controller', () => {
     controller = module.get<UsersController>(UsersController);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(controller).toBeDefined();
   });
 
-  it('should create and register a user account', async () => {
+  it("should create and register a user account", async () => {
     const userDto = {
       contactId: Math.floor(Math.random() * 100),
-      username: 'htest@email.com',
-      password: 'RarePassString.123',
-      roles: ['TestUser', 'User'],
+      username: "htest@email.com",
+      password: "RarePassString.123",
+      roles: ["TestUser", "User"],
       isActive: true,
     };
     const result = await controller.create(userDto);
@@ -65,7 +65,7 @@ describe('Users Controller', () => {
     });
   });
 
-  it('should view the details of a user', async () => {
+  it("should view the details of a user", async () => {
     const id = Date.now();
     const usr = {
       username: expect.any(String),
@@ -78,7 +78,7 @@ describe('Users Controller', () => {
       avatar: expect.any(String),
       roles: expect.any(Array),
       isActive: expect.any(Boolean),
-    }
+    };
 
     const result = await controller.findOne(id);
 
@@ -87,7 +87,7 @@ describe('Users Controller', () => {
       ...usr,
     });
     result.roles.forEach((it) => {
-      expect(it).toEqual(expect.any(String))
+      expect(it).toEqual(expect.any(String));
     });
   });
 });
