@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native"]
 }
 
@@ -99,7 +99,7 @@ model events {
   startDate        DateTime?            @db.Timestamp(6)
   endDate          DateTime?            @db.Timestamp(6)
   submittedAt      DateTime?            @db.Timestamp(6)
-  submittedById      Int?
+  submittedById    Int?
   details          String               @db.VarChar(500)
   venue            Json?
   groupId          Int?
@@ -338,4 +338,78 @@ enum request_category_enum {
   Salvation
   Engaged
   Other
+}
+
+model Task {
+  TaskID        Int       @id @default(autoincrement())
+  Name          String
+  Description   String?
+  DueDate       DateTime
+  RequireReport Boolean
+  ReportDueOn   DateTime?
+
+  assignments    TaskAssignment[]
+  reports        TaskReport[]
+  statusChanges  StatusChangeLog[]
+  Status         Status?           @relation(fields: [statusStatusID], references: [StatusID])
+  statusStatusID Int?
+}
+
+model TaskAssignment {
+  AssignmentID Int      @id @default(autoincrement())
+  AssignedTo   Int
+  TaskID       Int
+  AssignedOn   DateTime
+  DueDate      DateTime
+
+  task           Task @relation(fields: [TaskID], references: [TaskID])
+  assignedToUser User @relation(fields: [AssignedTo], references: [UserID])
+}
+
+model TaskReport {
+  ReportID         Int      @id @default(autoincrement())
+  SubmittedBy      Int
+  TaskID           Int
+  ReportDetail     String
+  ReportAttachment String
+  SubmittedOn      DateTime
+
+  task        Task @relation(fields: [TaskID], references: [TaskID])
+  submittedBy User @relation(fields: [SubmittedBy], references: [UserID])
+}
+
+model Status {
+  StatusID    Int     @id @default(autoincrement())
+  Name        String
+  Description String?
+
+  tasks       Task[]
+  oldStatuses StatusChangeLog[] @relation("oldStatus")
+  newStatuses StatusChangeLog[] @relation("newStatus")
+  User        User[]
+}
+
+model StatusChangeLog {
+  LogID        Int      @id @default(autoincrement())
+  UserID       Int // Assuming User ID
+  OldStatus    Int
+  NewStatus    Int
+  TimeOfChange DateTime
+
+  user       User   @relation(fields: [UserID], references: [UserID])
+  oldStatus  Status @relation("oldStatus", fields: [OldStatus], references: [StatusID])
+  newStatus  Status @relation("newStatus", fields: [NewStatus], references: [StatusID])
+  Task       Task?  @relation(fields: [taskTaskID], references: [TaskID])
+  taskTaskID Int?
+}
+
+model User {
+  UserID Int @id @default(autoincrement())
+  Status Int
+
+  tasksAssigned    TaskAssignment[]
+  reportsSubmitted TaskReport[]
+  statusChanges    StatusChangeLog[]
+
+  status Status @relation(fields: [Status], references: [StatusID])
 }

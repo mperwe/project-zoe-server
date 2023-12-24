@@ -14,6 +14,8 @@ const connectionFactory = {
     const tenantName = req.headers[TENANT_HEADER];
     const connectionPublic = await dbservice.getConnection();
     let tenantDetails: Tenant;
+    console.log("req", req);
+    console.log("tenantname", tenantName);
 
     if (!tenantName) {
       throw new BadRequestException(
